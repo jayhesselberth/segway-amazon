@@ -1,0 +1,85 @@
+
+####################################
+## StarCluster Configuration File ##
+####################################
+
+# $Date: 2010/08/08 13:23:43 $
+# $Revision: 1.2 $
+
+[global]
+DEFAULT_TEMPLATE=smallcluster
+ENABLE_EXPERIMENTAL=True
+
+[aws info]
+AWS_ACCESS_KEY_ID = XXX 
+AWS_SECRET_ACCESS_KEY = XXX
+AWS_USER_ID = XXX
+
+[key aws-key]
+KEY_LOCATION=SECRET_LOCATION
+
+[cluster smallcluster]
+KEYNAME = aws-key 
+CLUSTER_SIZE = 2
+CLUSTER_USER = sgeadmin
+CLUSTER_SHELL = bash
+# The base x86_64 StarCluster AMI is ami-a5c42dcc
+NODE_IMAGE_ID = ami-a5c42dcc 
+NODE_INSTANCE_TYPE = m1.large
+MASTER_INSTANCE_TYPE = m1.large
+VOLUMES = segway-data, segway-build 
+PLUGINS = segway-env, segway-sge
+
+[cluster smallcluster32]
+KEYNAME = aws-key 
+CLUSTER_SIZE = 1
+CLUSTER_USER = sgeadmin
+CLUSTER_SHELL = bash
+# The base i386 StarCluster AMI is ami-d1c42db8
+NODE_IMAGE_ID = ami-d1c42db8
+NODE_INSTANCE_TYPE = m1.small
+VOLUMES = segway-data, segway-build 
+PLUGINS = segway-env, segway-sge
+
+
+###########################################
+## Defining Additional Cluster Templates ##
+###########################################
+
+[cluster mediumcluster]
+EXTENDS=smallcluster
+NODE_INSTANCE_TYPE = m1.xlarge
+CLUSTER_SIZE=8
+
+[cluster largecluster]
+EXTENDS=mediumcluster
+CLUSTER_SIZE=16
+
+#############################
+## Configuring EBS Volumes ##
+#############################
+
+[volume segway-data]
+VOLUME_ID = vol-c999999
+MOUNT_PATH = /segway-data
+
+[volume segway-build]
+VOLUME_ID = vol-c999999
+MOUNT_PATH = /segway-build
+
+#####################################
+## Configuring StarCluster Plugins ##
+#####################################
+
+[plugin segway-sge]
+SETUP_CLASS = segway_plugin.SgeConfig
+remove_head_node = True
+
+[plugin segway-env]
+SETUP_CLASS = segway_plugin.EnvSetup
+segway_path = /segway-build
+
+# extra settings are passed as arguments to your plugin:
+# SOME_PARAM_FOR_MY_PLUGIN = 1
+# SOME_OTHER_PARAM = 2
+
